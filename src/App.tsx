@@ -54,7 +54,7 @@ export default function App() {
       <header className="top-bar">
         <div className="brand">
           <div className="avatar">
-            <img src="https://render.albiononline.com/v1/item/T8_BAG@3.png?size=96" alt="" />
+            <img src="https://render.albiononline.com/v1/item/T8_MOUNT_MAMMOTH_TRANSPORT.png?size=96&quality=5" alt="" />
           </div>
           <div>
             <h1>Holy Profit</h1>
