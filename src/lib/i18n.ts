@@ -1,0 +1,115 @@
+import type { Lang } from './settings';
+
+type Dict = Record<string, [string, string]>; // [es, en]
+
+const UI: Dict = {
+  home: ['Inicio', 'Home'],
+  craft: ['Crafteo', 'Crafting'],
+  refine: ['Refinado', 'Refining'],
+  cook: ['Cocina', 'Cooking'],
+  alchemy: ['Alquimia', 'Alchemy'],
+  flip: ['Flipping', 'Flipping'],
+  settings: ['Ajustes', 'Settings'],
+  subtitle: ['Calculadora de ganancias con precios reales del mercado', 'Profit calculator with real market prices'],
+  server: ['Servidor', 'Server'],
+  category: ['Categoría', 'Category'],
+  type: ['Tipo', 'Type'],
+  tier: ['Nivel', 'Tier'],
+  enchant: ['Encantamiento', 'Enchantment'],
+  quality: ['Calidad', 'Quality'],
+  search: ['Buscar…', 'Search…'],
+  all: ['Todos', 'All'],
+  calculate: ['Calcular', 'Calculate'],
+  item: ['Objeto', 'Item'],
+  unitCost: ['Coste/u', 'Cost/u'],
+  buyMats: ['Materiales', 'Materials'],
+  craftIn: ['Producir en', 'Produce in'],
+  sellIn: ['Vender en', 'Sell in'],
+  netSell: ['Venta neta/u', 'Net sale/u'],
+  profit: ['Beneficio/u', 'Profit/u'],
+  margin: ['Margen', 'Margin'],
+  perFocus: ['Plata/foco', 'Silver/focus'],
+  volume: ['Vol./día', 'Vol./day'],
+  bestPerMat: ['Mejor por material', 'Best per material'],
+  noResults: ['Sin resultados. Ajusta los filtros y pulsa Calcular.', 'No results. Adjust filters and press Calculate.'],
+  tooMany: ['Demasiados objetos ({n}). Elige un tipo, nivel o encantamiento para acotar (máx. {max}).', 'Too many items ({n}). Pick a type, tier or enchantment to narrow it down (max {max}).'],
+  items: ['objetos', 'items'],
+  missingPrices: ['Sin precio de materiales', 'Missing material prices'],
+  noSellData: ['Sin datos de venta', 'No sales data'],
+  close: ['Cerrar', 'Close'],
+  material: ['Material', 'Material'],
+  qty: ['Cant.', 'Qty'],
+  price: ['Precio', 'Price'],
+  city: ['Ciudad', 'City'],
+  market: ['Mercado', 'Market'],
+  history: ['Histórico', 'History'],
+  current: ['Actual', 'Current'],
+  net: ['Neto', 'Net'],
+  bonus: ['Bono', 'Bonus'],
+  rrr: ['Retorno', 'Return'],
+  costCraft: ['Coste/receta', 'Cost/recipe'],
+  stationFee: ['Tarifa estación', 'Station fee'],
+  artifact: ['no retornable', 'not returned'],
+  perRecipe: ['por receta', 'per recipe'],
+  produces: ['Produce {n} u. por receta', 'Makes {n} per recipe'],
+  focusCost: ['Foco por receta', 'Focus per recipe'],
+  flagOk: ['Precio actual verificado contra el histórico', 'Current price verified against history'],
+  flagOutlier: ['El precio actual ({cur}) se aleja del histórico; se usa el valor más conservador', 'Current price ({cur}) deviates from history; using the most conservative value'],
+  flagHist: ['Sin precio actual reciente; se usa el promedio histórico', 'No recent current price; using historical average'],
+  flagNohist: ['Sin historial: precio actual sin verificar', 'No history: unverified current price'],
+  lowVolume: ['Poco volumen de venta', 'Low sales volume'],
+  suspicious: ['Muy por debajo del histórico: puede ser un único listado', 'Far below history: may be a single listing'],
+  from: ['Comprar en', 'Buy in'],
+  to: ['Vender en', 'Sell in'],
+  buy: ['Compra', 'Buy'],
+  sell: ['Venta', 'Sell'],
+  roi: ['ROI', 'ROI'],
+  routes: ['Rutas', 'Routes'],
+  flipSource: ['Origen de los objetos', 'Item source'],
+  products: ['Productos', 'Products'],
+  materials: ['Materiales', 'Materials'],
+  loadingData: ['Cargando datos del juego…', 'Loading game data…'],
+  reset: ['Restablecer', 'Reset'],
+  lastUpdate: ['Datos del juego', 'Game data'],
+  bonusVaries: ['El bono de ciudad depende del tipo: se elige la mejor ciudad para cada objeto.', 'City bonus depends on the type: the best city is picked for each item.'],
+  reliableOnly: ['Solo con volumen suficiente (≥ {v} ventas/día)', 'Only with enough volume (≥ {v} sales/day)'],
+  hiddenLowVol: ['{n} ocultos por poco volumen o sin historial', '{n} hidden for low volume or no history'],
+};
+
+const CATS: Dict = {
+  weapons: ['Armas', 'Weapons'], armors: ['Armaduras', 'Armors'], head: ['Cascos', 'Helmets'], shoes: ['Botas', 'Shoes'],
+  offhands: ['Mano izquierda', 'Off-hands'], capes: ['Capas', 'Capes'], bags: ['Bolsas', 'Bags'], mounts: ['Monturas', 'Mounts'],
+  gathering: ['Recolección', 'Gathering'], refined: ['Recursos refinados', 'Refined resources'], food: ['Comidas', 'Food'],
+  ingredients: ['Ingredientes', 'Ingredients'], potions: ['Pociones', 'Potions'],
+  bow: ['Arcos', 'Bows'], crossbow: ['Ballestas', 'Crossbows'], cursestaff: ['Bastones malditos', 'Cursed staffs'], firestaff: ['Bastones de fuego', 'Fire staffs'],
+  froststaff: ['Bastones de escarcha', 'Frost staffs'], arcanestaff: ['Bastones arcanos', 'Arcane staffs'], holystaff: ['Bastones sagrados', 'Holy staffs'],
+  naturestaff: ['Bastones de naturaleza', 'Nature staffs'], dagger: ['Dagas', 'Daggers'], knuckles: ['Guanteletes de guerra', 'War gloves'], spear: ['Lanzas', 'Spears'],
+  axe: ['Hachas', 'Axes'], sword: ['Espadas', 'Swords'], quarterstaff: ['Bastones de combate', 'Quarterstaffs'], hammer: ['Martillos', 'Hammers'], mace: ['Mazas', 'Maces'],
+  shapeshifterstaff: ['Bastones cambiaformas', 'Shapeshifter staffs'],
+  plate_helmet: ['Cascos de placas', 'Plate helmets'], plate_armor: ['Armaduras de placas', 'Plate armor'], plate_shoes: ['Botas de placas', 'Plate shoes'],
+  leather_helmet: ['Capuchas de cuero', 'Leather hoods'], leather_armor: ['Chaquetas de cuero', 'Leather jackets'], leather_shoes: ['Zapatos de cuero', 'Leather shoes'],
+  cloth_helmet: ['Capuchas de tela', 'Cloth cowls'], cloth_armor: ['Túnicas de tela', 'Cloth robes'], cloth_shoes: ['Sandalias de tela', 'Cloth sandals'],
+  shieldtype: ['Escudos', 'Shields'], booktype: ['Libros', 'Tomes'], torchtype: ['Antorchas', 'Torches'], satchels: ['Mochilas', 'Satchels'],
+  basemounts: ['Monturas básicas', 'Basic mounts'], raremounts: ['Monturas raras', 'Rare mounts'], tools: ['Herramientas', 'Tools'], gear: ['Equipo de recolector', 'Gatherer gear'],
+  other: ['Otros', 'Other'], planks: ['Tablas', 'Planks'], stoneblock: ['Bloques de piedra', 'Stone blocks'], metalbars: ['Lingotes', 'Metal bars'],
+  leather: ['Cuero', 'Leather'], cloth: ['Tela', 'Cloth'],
+  grilledfish: ['Pescado a la parrilla', 'Grilled fish'], salads: ['Ensaladas', 'Salads'], soups: ['Sopas', 'Soups'], pies: ['Pasteles', 'Pies'], omelettes: ['Tortillas', 'Omelettes'],
+  stews: ['Guisos', 'Stews'], sandwiches: ['Sándwiches', 'Sandwiches'], roasts: ['Asados', 'Roasts'], event: ['Evento', 'Event'],
+  heal: ['Curación', 'Healing'], energy: ['Energía', 'Energy'], gigantify: ['Gigantismo', 'Gigantify'], resistance: ['Resistencia', 'Resistance'], slowfield: ['Pegajosa', 'Sticky'],
+  poison: ['Veneno', 'Poison'], invisibility: ['Invisibilidad', 'Invisibility'], calming: ['Calma', 'Calming'], cleanse: ['Limpieza', 'Cleansing'], acid: ['Ácido', 'Acid'],
+  berserk: ['Berserker', 'Berserk'], lava: ['Lava', 'Hellfire'], gather: ['Recolección', 'Gathering'], tornado: ['Tornado', 'Tornado'], lifeward: ['Protección vital', 'Lifeward'],
+};
+
+export const QUALITIES: [string, string][] = [
+  ['Normal', 'Normal'], ['Buena', 'Good'], ['Sobresaliente', 'Outstanding'], ['Excelente', 'Excellent'], ['Obra maestra', 'Masterpiece'],
+];
+
+const idx = (lang: Lang) => (lang === 'es' ? 0 : 1);
+
+export function t(lang: Lang, key: string, vars?: Record<string, string | number>): string {
+  let s = UI[key]?.[idx(lang)] ?? key;
+  if (vars) for (const [k, v] of Object.entries(vars)) s = s.replace(`{${k}}`, String(v));
+  return s;
+}
+
+export const catLabel = (lang: Lang, key: string) => CATS[key]?.[idx(lang)] ?? key.replace(/_/g, ' ');
