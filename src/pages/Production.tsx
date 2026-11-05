@@ -4,7 +4,7 @@ import { calcProduction, type ProdResult } from '../lib/calc';
 import { bonusCities, type Activity } from '../lib/data';
 import { pct, roman } from '../lib/format';
 import { buildBook } from '../lib/prices';
-import { applyFilters, FilterBar, useRecipeFilters } from '../components/Filters';
+import { applyFilters, FilterBar, ItemPreview, useRecipeFilters } from '../components/Filters';
 import { CityTag, Flag, ItemIcon, Modal, Panel, Silver, sortBy, Th, useApp, type SortDir } from '../components/ui';
 
 const MAX_ITEMS = 600;
@@ -14,7 +14,8 @@ export function ProductionPage({ act }: { act: Activity }) {
   const { data, settings: s, tr, name } = app;
   const recipes = useMemo(() => data.recipes.filter((r) => r.act === act), [data, act]);
   const filters = useRecipeFilters(recipes);
-  const selected = useMemo(() => applyFilters(filters.inCat, filters.f, name), [filters.inCat, filters.f, name]);
+  const selected = applyFilters(filters, name);
+  const selectedIds = useMemo(() => new Set(selected.map((r) => r.id)), [selected]);
   const [results, setResults] = useState<ProdResult[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -57,11 +58,14 @@ export function ProductionPage({ act }: { act: Activity }) {
     focus: (r) => r.silverPerFocus,
     vol: (r) => r.sell?.vol ?? null,
   };
+  // Los resultados ya calculados se filtran en vivo con los filtros actuales
+  const matching = results?.filter((r) => selectedIds.has(r.recipe.id)) ?? [];
   // Un producto sin ventas suficientes en su mejor mercado tiene un precio poco fiable (posible outlier)
-  const reliable = results?.filter((r) => r.sell?.enoughVolume) ?? [];
-  const visible = reliableOnly ? reliable : results ?? [];
+  const reliable = matching.filter((r) => r.sell?.enoughVolume);
+  const visible = reliableOnly ? reliable : matching;
   const rows = sortBy(visible, getters[sort[0]], sort[1]);
-  const hidden = (results?.length ?? 0) - reliable.length;
+  const hidden = matching.length - reliable.length;
+  const notCalculated = results ? selected.filter((r) => !results.some((x) => x.recipe.id === r.id)).length : 0;
 
   return (
     <>
@@ -80,6 +84,7 @@ export function ProductionPage({ act }: { act: Activity }) {
           </button>
         </div>
         {error && <p className="error">{error}</p>}
+        <ItemPreview items={selected} state={filters} quality={isEquipment ? s.quality : 1} />
       </Panel>
 
       <Panel className="results">
@@ -93,6 +98,7 @@ export function ProductionPage({ act }: { act: Activity }) {
               {tr('reliableOnly', { v: s.minVolume })}
             </label>
             {reliableOnly && hidden > 0 && <span className="muted small">{tr('hiddenLowVol', { n: hidden })}</span>}
+            {notCalculated > 0 && <span className="warn small">{tr('notCalculated', { n: notCalculated })}</span>}
           </div>
           <div className="table-wrap">
             <table className="market-table">

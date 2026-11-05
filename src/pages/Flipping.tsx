@@ -4,7 +4,7 @@ import { calcFlips, type FlipResult } from '../lib/calc';
 import type { Activity } from '../lib/data';
 import { pct } from '../lib/format';
 import { buildBook } from '../lib/prices';
-import { applyFilters, FilterBar, useRecipeFilters } from '../components/Filters';
+import { applyFilters, FilterBar, ItemPreview, useRecipeFilters } from '../components/Filters';
 import { CityTag, Flag, ItemIcon, Modal, Panel, PillSelect, Silver, sortBy, Th, useApp, type SortDir } from '../components/ui';
 
 // Flipping solo consulta los propios objetos (sin materiales), así que admite más por cálculo
@@ -17,7 +17,7 @@ export function FlipPage() {
   const [source, setSource] = useState<'products' | 'materials'>('products');
   const recipes = useMemo(() => data.recipes.filter((r) => r.act === act), [data, act]);
   const filters = useRecipeFilters(recipes);
-  const selected = useMemo(() => applyFilters(filters.inCat, filters.f, name), [filters.inCat, filters.f, name]);
+  const selected = applyFilters(filters, name);
   const ids = useMemo(
     () => (source === 'products' ? selected.map((r) => r.id) : [...new Set(selected.flatMap((r) => r.r.map((x) => x[0])))]),
     [selected, source],
@@ -52,7 +52,9 @@ export function FlipPage() {
     roi: (r) => r.best?.roi ?? null,
     vol: (r) => r.best?.volTo ?? null,
   };
-  const rows = results ? sortBy(results.filter((r) => r.best), getters[sort[0]], sort[1]) : [];
+  // Los resultados ya calculados se filtran en vivo con los filtros actuales
+  const idSet = new Set(ids);
+  const rows = results ? sortBy(results.filter((r) => r.best && idSet.has(r.id)), getters[sort[0]], sort[1]) : [];
 
   return (
     <>
@@ -74,6 +76,7 @@ export function FlipPage() {
           </button>
         </div>
         {error && <p className="error">{error}</p>}
+        <ItemPreview items={selected} state={filters} quality={quality} />
       </Panel>
 
       <Panel className="results">
