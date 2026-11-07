@@ -7,9 +7,10 @@ import { Ctx, type AppCtx } from './components/ui';
 import { HomePage } from './pages/Home';
 import { ProductionPage } from './pages/Production';
 import { FlipPage } from './pages/Flipping';
+import { ComparePage } from './pages/Compare';
 import { SettingsPage } from './pages/SettingsPage';
 
-const PAGES = ['home', 'craft', 'refine', 'cook', 'alchemy', 'flip', 'settings'] as const;
+const PAGES = ['home', 'craft', 'refine', 'cook', 'alchemy', 'flip', 'compare', 'settings'] as const;
 type Page = (typeof PAGES)[number];
 
 const readHash = (): Page => {
@@ -103,6 +104,7 @@ export default function App() {
             {page === 'home' && <HomePage go={go} />}
             {(['craft', 'refine', 'cook', 'alchemy'] as Activity[]).map((a) => page === a && <ProductionPage key={a} act={a} />)}
             {page === 'flip' && <FlipPage />}
+            {page === 'compare' && <ComparePage />}
             {page === 'settings' && <SettingsPage onReset={reset} />}
           </Ctx.Provider>
         )}

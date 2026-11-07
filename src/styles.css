@@ -364,3 +364,24 @@ a { color: inherit; }
   .tabs a { padding: 6px 12px; }
   .btn-red { width: 100%; }
 }
+
+/* ---------- Comparar precios ---------- */
+.build-bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 12px 0; }
+.build-chip { display: inline-flex; align-items: stretch; border: 2px solid var(--navy); border-radius: 999px; overflow: hidden; background: var(--parch-1); font-weight: 700; }
+.build-chip button { border: 0; background: none; padding: 5px 12px; cursor: pointer; font: inherit; color: var(--ink); }
+.build-chip button:hover { background: rgba(240, 192, 72, 0.35); }
+.build-chip button.x { padding: 5px 10px; border-left: 2px solid rgba(30, 40, 70, 0.25); font-size: 12px; }
+.build-chip small { color: var(--ink-soft); font-weight: 400; }
+.pill.build-name { max-width: 220px; flex: 0 1 200px; min-width: 150px; }
+.compare-table { min-width: 1100px; }
+.compare-table thead th { white-space: nowrap; }
+.price-cell.best { background: rgba(76, 175, 58, 0.22); box-shadow: inset 0 0 0 2px rgba(56, 142, 40, 0.65); }
+.compare-table tfoot td { padding: 10px 8px; border-top: 3px solid rgba(120, 80, 40, 0.45); font-weight: 700; }
+.row-controls { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-top: 4px; }
+.row-controls select { font: inherit; font-size: 13px; padding: 2px 4px; border: 2px solid var(--navy); border-radius: 8px; background: var(--parch-1); color: var(--ink); }
+.qty-input { width: 64px; font: inherit; padding: 4px 6px; border: 2px solid var(--navy); border-radius: 8px; background: var(--parch-1); text-align: right; }
+.link-btn { border: 0; background: none; color: var(--neg); font: inherit; font-size: 13px; cursor: pointer; text-decoration: underline; padding: 0; }
+.compare-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; margin-bottom: 14px; }
+.compare-summary > div { display: flex; flex-direction: column; gap: 4px; padding: 10px 14px; border-radius: 10px; background: rgba(255, 245, 220, 0.6); border: 2px solid rgba(160, 110, 60, 0.35); }
+.compare-summary b { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.btn-gold:disabled { filter: grayscale(0.7); cursor: not-allowed; }

@@ -23,7 +23,7 @@ const catRank = (c: string) => (CAT_ORDER.includes(c) ? CAT_ORDER.indexOf(c) : C
 export const familyKey = (id: string) => id.replace(/^T\d+_/, '').replace(/@\d+$/, '').replace(/_LEVEL\d+$/, '');
 
 // Búsqueda sin tildes ni mayúsculas, todas las palabras deben aparecer
-const normalize = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+export const normalize = (s: string) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 
 // Filtros estilo mercado del juego: Buscar · Categoría · Tipo · Nivel · Encantamiento · Calidad
 export function useRecipeFilters(recipes: Recipe[]) {

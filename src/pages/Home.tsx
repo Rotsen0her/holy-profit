@@ -5,6 +5,7 @@ const CARDS = [
   { page: 'refine', icon: 'T6_PLANKS_LEVEL1@1', es: 'Tablas, lingotes, tela, cuero y bloques. Incluye el bono del +40 % de cada ciudad.', en: 'Planks, bars, cloth, leather and blocks. Includes each city’s +40% bonus.' },
   { page: 'cook', icon: 'T8_MEAL_STEW@1', es: 'Comidas e ingredientes (pan, harina, mantequilla, alcohol) con salsas de pescado.', en: 'Food and ingredients (bread, flour, butter, alcohol) with fish sauces.' },
   { page: 'alchemy', icon: 'T6_POTION_HEAL@1', es: 'Pociones de curación, energía, resistencia y más, con extractos arcanos.', en: 'Healing, energy, resistance potions and more, with arcane extracts.' },
+  { page: 'compare', icon: 'T8_MAIN_SWORD@1', es: 'Para uso personal: arma tu build y mira en qué ciudad sale más barato comprarla.', en: 'For personal use: build your loadout and see which city sells it cheapest.' },
   { page: 'flip', icon: 'T8_BAG', es: 'Compra barato en una ciudad y vende caro en otra o en el Black Market.', en: 'Buy low in one city and sell high in another or the Black Market.' },
 ];
 
