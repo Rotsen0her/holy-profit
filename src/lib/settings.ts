@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import type { Server } from './api';
 import { CRAFT_CITIES, type City } from './data';
 
@@ -83,3 +83,39 @@ export function focusEfficiency(s: Settings): number {
 
 export const salesTax = (s: Settings) => (s.premium ? 0.04 : 0.08);
 export const SETUP_FEE = 0.025;
+
+// Ajustes independientes por módulo (crafteo, refinado, flipping…). Servidor e idioma son globales.
+// Un módulo sin cambios hereda los ajustes globales guardados (así se conserva la configuración previa).
+const MOD_KEY = 'holy-profit:modules';
+export type ModuleOverrides = Record<string, Partial<Settings>>;
+
+function readModules(): ModuleOverrides {
+  try {
+    const raw = localStorage.getItem(MOD_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch {
+    /* almacenamiento no disponible */
+  }
+  return {};
+}
+
+export function useModuleSettings() {
+  const [mods, setMods] = useState<ModuleOverrides>(readModules);
+  useEffect(() => {
+    try {
+      localStorage.setItem(MOD_KEY, JSON.stringify(mods));
+    } catch {
+      /* almacenamiento no disponible */
+    }
+  }, [mods]);
+  const patch = useCallback((m: string, p: Partial<Settings>) => setMods((all) => ({ ...all, [m]: { ...all[m], ...p } })), []);
+  const resetModule = useCallback((m: string) => {
+    const { server: _s, lang: _l, ...defaults } = DEFAULT_SETTINGS;
+    setMods((all) => ({ ...all, [m]: defaults }));
+  }, []);
+  return [mods, patch, resetModule] as const;
+}
+
+export function moduleSettings(base: Settings, own: Partial<Settings> | undefined): Settings {
+  return { ...base, ...own, server: base.server, lang: base.lang, stationFee: { ...base.stationFee, ...own?.stationFee } };
+}

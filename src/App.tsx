@@ -2,16 +2,15 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { onApiStatus, type Server } from './lib/api';
 import { loadGameData, type Activity, type GameData } from './lib/data';
 import { t } from './lib/i18n';
-import { useSettings, type Lang } from './lib/settings';
+import { moduleSettings, useModuleSettings, useSettings, type Lang, type Settings } from './lib/settings';
 import { Ctx, type AppCtx } from './components/ui';
 import { iconUrl } from './lib/data';
 import { HomePage } from './pages/Home';
 import { ProductionPage } from './pages/Production';
 import { FlipPage } from './pages/Flipping';
 import { ComparePage } from './pages/Compare';
-import { SettingsPage } from './pages/SettingsPage';
 
-const PAGES = ['home', 'craft', 'refine', 'cook', 'alchemy', 'flip', 'compare', 'settings'] as const;
+const PAGES = ['home', 'craft', 'refine', 'cook', 'alchemy', 'flip', 'compare'] as const;
 type Page = (typeof PAGES)[number];
 
 // Pestañas agrupadas por propósito, con el icono de un objeto representativo
@@ -27,7 +26,8 @@ const readHash = (): Page => {
 };
 
 export default function App() {
-  const [settings, update, reset] = useSettings();
+  const [settings, update] = useSettings();
+  const [mods, patchModule, resetModule] = useModuleSettings();
   const [page, setPage] = useState<Page>(readHash);
   const [data, setData] = useState<GameData | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -46,17 +46,24 @@ export default function App() {
   }, []);
 
   const lang = settings.lang;
+  // Cada sección tiene sus propios ajustes; servidor e idioma se comparten
   const ctx = useMemo<AppCtx | null>(() => {
     if (!data) return null;
     const li = lang === 'es' ? 1 : 0;
+    const own = moduleSettings(settings, mods[page]);
     return {
-      settings,
-      update,
+      settings: own,
+      update: (p: Partial<Settings>) => {
+        const { server, lang: l, ...rest } = p;
+        if (server || l) update({ ...(server && { server }), ...(l && { lang: l }) });
+        if (Object.keys(rest).length) patchModule(page, rest);
+      },
+      reset: () => resetModule(page),
       data,
       name: (id) => data.names[id]?.[li] ?? id,
       tr: (key, vars) => t(lang, key, vars),
     };
-  }, [data, settings, update, lang]);
+  }, [data, settings, update, lang, mods, page, patchModule, resetModule]);
 
   return (
     <div className="app">
@@ -79,9 +86,6 @@ export default function App() {
               <option value="east">Asia (East)</option>
             </select>
           </label>
-          <a href="#settings" className={`settings-btn ${page === 'settings' ? 'on' : ''}`}>
-            ⚙ <span>{t(lang, 'settings')}</span>
-          </a>
           <div className="lang-switch">
             {(['es', 'en'] as Lang[]).map((l) => (
               <button key={l} className={lang === l ? 'on' : ''} onClick={() => update({ lang: l })}>
@@ -118,7 +122,6 @@ export default function App() {
             {(['craft', 'refine', 'cook', 'alchemy'] as Activity[]).map((a) => page === a && <ProductionPage key={a} act={a} />)}
             {page === 'flip' && <FlipPage />}
             {page === 'compare' && <ComparePage />}
-            {page === 'settings' && <SettingsPage onReset={reset} />}
           </Ctx.Provider>
         )}
       </main>

@@ -6,6 +6,7 @@ import type { Settings } from '../lib/settings';
 export interface AppCtx {
   settings: Settings;
   update: (p: Partial<Settings>) => void;
+  reset: () => void; // restablece los ajustes de la sección actual
   data: GameData;
   name: (id: string) => string;
   tr: (key: string, vars?: Record<string, string | number>) => string;

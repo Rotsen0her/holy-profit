@@ -70,7 +70,7 @@ export function FlipPage() {
           />
         </div>
         <FilterBar state={filters} showQuality={act === 'craft' && source === 'products'} />
-        <QuickSettings focus={false} />
+        <QuickSettings kind="flip" />
         <div className="action-row">
           <p className="hint">{ids.length > MAX_ITEMS ? tr('tooMany', { n: ids.length, max: MAX_ITEMS }) : ''}</p>
           <button className="btn-red" disabled={busy || !ids.length || ids.length > MAX_ITEMS} onClick={calculate}>

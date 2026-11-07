@@ -22,6 +22,7 @@ const UI: Dict = {
   instant: ['Al instante', 'Instant'],
   order: ['Con orden', 'Order'],
   moreSettings: ['Más ajustes', 'More settings'],
+  lessSettings: ['Menos ajustes', 'Fewer settings'],
   stepPick: ['Elige qué calcular · {act}', 'Choose what to calculate · {act}'],
   stepResults: ['Resultados', 'Results'],
   stepFlip: ['Elige qué objetos revender', 'Choose items to flip'],
