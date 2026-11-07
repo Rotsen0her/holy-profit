@@ -53,6 +53,8 @@ export function ComparePage() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [buildName, setBuildName] = useState('');
+  const [orBetter, setOrBetter] = useState(true);
+  const [maxAge, setMaxAge] = useState(72);
 
   useEffect(() => {
     try {
@@ -117,10 +119,13 @@ export function ComparePage() {
     setError(null);
     try {
       const ids = items.map((x) => x.id);
-      const qs = [...new Set(items.map((x) => x.q))];
-      const qOf = new Map(items.map((x) => [x.id, x.q]));
+      // Se piden todas las calidades: permite usar una calidad superior si es más barata o la única en venta
+      const qs = [1, 2, 3, 4, 5];
       const [cur, his] = await Promise.all([fetchCurrent(s.server, ids, qs), fetchHistory(s.server, ids, qs)]);
-      setBook(buildBook(cur, his, s, (id) => qOf.get(id) ?? 1));
+      const s2 = { ...s, maxAgeHours: maxAge };
+      const merged: Book = new Map();
+      for (const qq of qs) for (const [k, v] of buildBook(cur, his, s2, () => qq)) merged.set(k, v);
+      setBook(merged);
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
     } finally {
@@ -132,13 +137,20 @@ export function ComparePage() {
   // Precio de compra inmediata (orden de venta más barata) por objeto y ciudad
   const th = s.outlierPct / 100;
   const rows = items.map((x) => {
-    const stats = book?.get(bookKey(x.id, x.q));
     const cells = CRAFT_CITIES.map((c) => {
-      const st = stats?.[c];
+      // Calidad pedida o, si está activado, cualquier calidad superior (la más barata)
+      const quals = orBetter && catalog.get(x.id)?.hasQuality ? [1, 2, 3, 4, 5].filter((qq) => qq >= x.q) : [x.q];
+      let pick: { qq: number; st: NonNullable<ReturnType<Book['get']>>[typeof c] } | null = null;
+      for (const qq of quals) {
+        const st = book?.get(bookKey(x.id, qq))?.[c];
+        if (st?.sellMin != null && (!pick || st.sellMin < pick.st!.sellMin!)) pick = { qq, st };
+      }
+      const own = book?.get(bookKey(x.id, x.q))?.[c];
+      const st = pick?.st ?? own;
       const price = st?.sellMin ?? null;
-      const vwap = st?.vwap ?? null;
+      const vwap = st?.vwap ?? own?.vwap ?? null;
       const dev = price != null && vwap != null ? price / vwap - 1 : null;
-      return { city: c, price, vwap, age: st?.sellAge ?? null, dev };
+      return { city: c, price, vwap, age: st?.sellAge ?? null, dev, qq: pick?.qq ?? x.q };
     });
     const avail = cells.filter((c) => c.price != null);
     const best = avail.length ? avail.reduce((a, b) => (b.price! < a.price! ? b : a)) : null;
@@ -255,6 +267,21 @@ export function ComparePage() {
 
       {items.length > 0 && (
         <Panel className="results">
+          <div className="results-bar">
+            <label className="check">
+              <input type="checkbox" checked={orBetter} onChange={(e) => setOrBetter(e.target.checked)} />
+              {tr('orBetter')}
+            </label>
+            <PillSelect
+              label={tr('maxAge')}
+              value={String(maxAge)}
+              onChange={(v) => {
+                setMaxAge(Number(v));
+                setBook(null);
+              }}
+              options={[6, 24, 72, 168].map((h) => ({ value: String(h), label: `${tr('maxAge')}: ${h < 48 ? `${h} h` : `${h / 24} ${tr('days')}`}` }))}
+            />
+          </div>
           {book && (
             <div className="compare-summary">
               <div>
@@ -366,6 +393,11 @@ export function ComparePage() {
                             {cell.price != null ? (
                               <>
                                 <Silver value={cell.price} />
+                                {cell.qq !== r.x.q && (
+                                  <span className="q-badge" title={QUALITIES[cell.qq - 1][lang === 'es' ? 0 : 1]}>
+                                    {QUALITIES[cell.qq - 1][lang === 'es' ? 0 : 1].slice(0, 3)}
+                                  </span>
+                                )}
                                 {high && <span className="warn" aria-label={tr('aboveHist')}> ▲</span>}
                                 {low && <span className="pos" aria-label={tr('belowHist')}> ▼</span>}
                               </>
@@ -404,7 +436,15 @@ export function ComparePage() {
           {!book && <p className="empty">{tr('pressCheck')}</p>}
           {book && (
             <p className="hint small" style={{ marginTop: 10 }}>
-              {tr('compareLegend', { pct: s.outlierPct, h: s.maxAgeHours })}
+              {tr('compareLegend', { pct: s.outlierPct, h: maxAge })}
+            </p>
+          )}
+          {book && (
+            <p className="hint small" style={{ marginTop: 6 }}>
+              {tr('dataSource')}{' '}
+              <a href="https://www.albion-online-data.com/" target="_blank" rel="noreferrer">
+                albion-online-data.com
+              </a>
             </p>
           )}
         </Panel>

@@ -385,3 +385,4 @@ a { color: inherit; }
 .compare-summary > div { display: flex; flex-direction: column; gap: 4px; padding: 10px 14px; border-radius: 10px; background: rgba(255, 245, 220, 0.6); border: 2px solid rgba(160, 110, 60, 0.35); }
 .compare-summary b { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 .btn-gold:disabled { filter: grayscale(0.7); cursor: not-allowed; }
+.q-badge { margin-left: 4px; font-size: 11px; font-weight: 700; padding: 0 5px; border-radius: 6px; background: var(--navy); color: #fff; cursor: help; }
