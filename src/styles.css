@@ -458,3 +458,25 @@ footer.disclaimer { margin-top: 26px; }
   .qs-more { margin-left: 0; }
   .step-num { width: 26px; height: 26px; font-size: 15px; }
 }
+
+/* ---------- Desplegables con estilo del juego ---------- */
+.field select, .row-controls select {
+  appearance: none; -webkit-appearance: none; cursor: pointer;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%2322324a' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"),
+    linear-gradient(180deg, #fbefd8, #edd5ad);
+  background-repeat: no-repeat; background-position: right 14px center, 0 0; background-size: 12px 8px, 100% 100%;
+  box-shadow: inset 0 1px 0 #fff8e8, 0 2px 0 rgba(0, 0, 0, 0.25);
+}
+.field select { padding-right: 38px; }
+.field select:hover, .row-controls select:hover { filter: brightness(1.04); border-color: var(--navy-2); }
+.field select:focus, .row-controls select:focus { box-shadow: 0 0 0 3px rgba(240, 192, 72, 0.6); }
+.row-controls select {
+  font-weight: 700; padding: 3px 26px 3px 10px; border-radius: 999px;
+  background-position: right 9px center, 0 0; background-size: 10px 7px, 100% 100%; outline: none;
+}
+.field input { box-shadow: inset 0 1px 0 #fff8e8, 0 2px 0 rgba(0, 0, 0, 0.25); }
+/* Lista desplegada (donde el navegador lo permite) */
+select option { background: #f6e4c4; color: #4a2c18; font-weight: 600; }
+select option:checked { background: #22324a; color: #f7e3bf; }
+.pill.dark select option { background: #f6e4c4; color: #4a2c18; }
