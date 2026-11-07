@@ -4,6 +4,7 @@ import { loadGameData, type Activity, type GameData } from './lib/data';
 import { t } from './lib/i18n';
 import { useSettings, type Lang } from './lib/settings';
 import { Ctx, type AppCtx } from './components/ui';
+import { iconUrl } from './lib/data';
 import { HomePage } from './pages/Home';
 import { ProductionPage } from './pages/Production';
 import { FlipPage } from './pages/Flipping';
@@ -12,6 +13,13 @@ import { SettingsPage } from './pages/SettingsPage';
 
 const PAGES = ['home', 'craft', 'refine', 'cook', 'alchemy', 'flip', 'compare', 'settings'] as const;
 type Page = (typeof PAGES)[number];
+
+// Pestañas agrupadas por propósito, con el icono de un objeto representativo
+const NAV: { group: string | null; pages: [Page, string | null][] }[] = [
+  { group: null, pages: [['home', null]] },
+  { group: 'navProduce', pages: [['craft', 'T6_2H_CLAYMORE@2'], ['refine', 'T6_PLANKS_LEVEL1@1'], ['cook', 'T8_MEAL_STEW@1'], ['alchemy', 'T6_POTION_HEAL@1']] },
+  { group: 'navTrade', pages: [['flip', 'T8_BAG'], ['compare', 'T8_MAIN_SWORD@1']] },
+];
 
 const readHash = (): Page => {
   const h = location.hash.slice(1) as Page;
@@ -53,7 +61,7 @@ export default function App() {
   return (
     <div className="app">
       <header className="top-bar">
-        <div className="brand">
+        <a className="brand" href="#home">
           <div className="avatar">
             <img src="https://render.albiononline.com/v1/item/T8_MOUNT_MAMMOTH_TRANSPORT.png?size=96&quality=5" alt="" />
           </div>
@@ -61,7 +69,7 @@ export default function App() {
             <h1>Holy Profit</h1>
             <p>{t(lang, 'subtitle')}</p>
           </div>
-        </div>
+        </a>
         <div className="top-controls">
           <label className="pill dark">
             <span className="pill-label">{t(lang, 'server')}</span>
@@ -71,6 +79,9 @@ export default function App() {
               <option value="east">Asia (East)</option>
             </select>
           </label>
+          <a href="#settings" className={`settings-btn ${page === 'settings' ? 'on' : ''}`}>
+            ⚙ <span>{t(lang, 'settings')}</span>
+          </a>
           <div className="lang-switch">
             {(['es', 'en'] as Lang[]).map((l) => (
               <button key={l} className={lang === l ? 'on' : ''} onClick={() => update({ lang: l })}>
@@ -82,18 +93,20 @@ export default function App() {
       </header>
 
       <nav className="tabs">
-        {PAGES.map((p) => (
-          <a key={p} href={`#${p}`} className={page === p ? 'active' : ''}>
-            {t(lang, p)}
-          </a>
+        {NAV.map((g, gi) => (
+          <div key={gi} className="tab-group">
+            {g.group && <span className="tab-group-label">{t(lang, g.group)}</span>}
+            <div className="tab-group-items">
+              {g.pages.map(([p, icon]) => (
+                <a key={p} href={`#${p}`} className={page === p ? 'active' : ''}>
+                  {icon ? <img src={iconUrl(icon, 1, 64)} alt="" /> : <span className="home-ico">⌂</span>}
+                  {t(lang, p)}
+                </a>
+              ))}
+            </div>
+          </div>
         ))}
       </nav>
-
-      <p className="disclaimer">
-        {lang === 'es'
-          ? 'Precios de albion-online-data.com. No afiliado a Albion Online ni a Sandbox Interactive GmbH.'
-          : 'Prices from albion-online-data.com. Not affiliated with Albion Online or Sandbox Interactive GmbH.'}
-      </p>
 
       <main>
         {loadError && <p className="error">{loadError}</p>}
@@ -109,6 +122,12 @@ export default function App() {
           </Ctx.Provider>
         )}
       </main>
+
+      <footer className="disclaimer">
+        {lang === 'es'
+          ? 'Precios de albion-online-data.com. No afiliado a Albion Online ni a Sandbox Interactive GmbH.'
+          : 'Prices from albion-online-data.com. Not affiliated with Albion Online or Sandbox Interactive GmbH.'}
+      </footer>
 
       {apiStatus && (
         <div className="toast">

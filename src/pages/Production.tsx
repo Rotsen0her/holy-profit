@@ -5,6 +5,7 @@ import { bonusCities, type Activity } from '../lib/data';
 import { pct, roman } from '../lib/format';
 import { buildBook } from '../lib/prices';
 import { applyFilters, FilterBar, ItemPreview, useRecipeFilters } from '../components/Filters';
+import { EmptyGuide, QuickSettings } from '../components/QuickSettings';
 import { CityTag, Flag, ItemIcon, Modal, Panel, Silver, sortBy, Th, useApp, type SortDir } from '../components/ui';
 
 const MAX_ITEMS = 600;
@@ -69,8 +70,9 @@ export function ProductionPage({ act }: { act: Activity }) {
 
   return (
     <>
-      <Panel title={tr(act)} right={<span className="count-badge">{selected.length} {tr('items')}</span>}>
+      <Panel title={<><span className="step-num">1</span>{tr('stepPick', { act: tr(act).toLowerCase() })}</>} right={<span className="count-badge">{selected.length} {tr('items')}</span>}>
         <FilterBar state={filters} showQuality={isEquipment} />
+        <QuickSettings />
         <div className="action-row">
           <p className="hint">
             {selected.length > MAX_ITEMS
@@ -87,9 +89,9 @@ export function ProductionPage({ act }: { act: Activity }) {
         <ItemPreview items={selected} state={filters} quality={isEquipment ? s.quality : 1} />
       </Panel>
 
-      <Panel className="results">
+      <Panel className="results" title={<><span className="step-num">2</span>{tr('stepResults')}</>} right={results && <span className="count-badge">{tr('shownOf', { n: rows.length, m: matching.length })}</span>}>
         {!results ? (
-          <p className="empty">{tr('noResults')}</p>
+          <EmptyGuide steps={[tr('guideFilter'), tr('guideCalc'), tr('guideRow')]} />
         ) : (
           <>
           <div className="results-bar">

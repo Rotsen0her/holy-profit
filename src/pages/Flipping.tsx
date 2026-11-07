@@ -5,6 +5,7 @@ import type { Activity } from '../lib/data';
 import { pct } from '../lib/format';
 import { buildBook } from '../lib/prices';
 import { applyFilters, FilterBar, ItemPreview, useRecipeFilters } from '../components/Filters';
+import { EmptyGuide, QuickSettings } from '../components/QuickSettings';
 import { CityTag, Flag, ItemIcon, Modal, Panel, PillSelect, Silver, sortBy, Th, useApp, type SortDir } from '../components/ui';
 
 // Flipping solo consulta los propios objetos (sin materiales), así que admite más por cálculo
@@ -58,7 +59,7 @@ export function FlipPage() {
 
   return (
     <>
-      <Panel title={tr('flip')} right={<span className="count-badge">{ids.length} {tr('items')}</span>}>
+      <Panel title={<><span className="step-num">1</span>{tr('stepFlip')}</>} right={<span className="count-badge">{ids.length} {tr('items')}</span>}>
         <div className="filter-bar">
           <PillSelect label={tr('flipSource')} value={act} onChange={(v) => setAct(v as Activity)} options={ACTS.map((a) => ({ value: a, label: tr(a) }))} />
           <PillSelect
@@ -69,6 +70,7 @@ export function FlipPage() {
           />
         </div>
         <FilterBar state={filters} showQuality={act === 'craft' && source === 'products'} />
+        <QuickSettings focus={false} />
         <div className="action-row">
           <p className="hint">{ids.length > MAX_ITEMS ? tr('tooMany', { n: ids.length, max: MAX_ITEMS }) : ''}</p>
           <button className="btn-red" disabled={busy || !ids.length || ids.length > MAX_ITEMS} onClick={calculate}>
@@ -79,9 +81,9 @@ export function FlipPage() {
         <ItemPreview items={selected} state={filters} quality={quality} />
       </Panel>
 
-      <Panel className="results">
+      <Panel className="results" title={<><span className="step-num">2</span>{tr('stepResults')}</>} right={results && <span className="count-badge">{rows.length}</span>}>
         {!results ? (
-          <p className="empty">{tr('noResults')}</p>
+          <EmptyGuide steps={[tr('guideFlip1'), tr('guideCalc'), tr('guideFlip3')]} />
         ) : (
           <div className="table-wrap">
             <table className="market-table">

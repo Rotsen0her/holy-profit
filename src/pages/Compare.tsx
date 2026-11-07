@@ -185,7 +185,7 @@ export function ComparePage() {
 
   return (
     <>
-      <Panel title={tr('compare')} right={<span className="count-badge">{items.length} {tr('items')}</span>}>
+      <Panel title={<><span className="step-num">1</span>{tr('stepCompare')}</>} right={<span className="count-badge">{items.length} {tr('items')}</span>}>
         <p className="hint">{tr('compareIntro')}</p>
         <div className="filter-bar" style={{ marginTop: 12 }}>
           <label className="pill search">
@@ -266,7 +266,7 @@ export function ComparePage() {
       </Panel>
 
       {items.length > 0 && (
-        <Panel className="results">
+        <Panel className="results" title={<><span className="step-num">2</span>{tr('stepCompare2')}</>}>
           <div className="results-bar">
             <label className="check">
               <input type="checkbox" checked={orBetter} onChange={(e) => setOrBetter(e.target.checked)} />

@@ -20,15 +20,25 @@ export function HomePage({ go }: { go: (p: string) => void }) {
             ? 'Elige una actividad y la calculadora busca, con precios reales del Albion Online Data Project, dónde te sale más barato comprar cada material, en qué ciudad conviene producir (bono de ciudad, foco y tarifa de estación) y dónde se vende más caro.'
             : 'Pick an activity and the calculator uses real Albion Online Data Project prices to find where each material is cheapest, which city is best to produce in (city bonus, focus and station fee) and where it sells for the most.'}
         </p>
-        <div className="cards">
-          {CARDS.map((c) => (
-            <button key={c.page} className="card" onClick={() => go(c.page)}>
-              <ItemIcon id={c.icon} size={72} />
-              <strong>{tr(c.page)}</strong>
-              <span>{es ? c.es : c.en}</span>
-            </button>
-          ))}
-        </div>
+        {[
+          ['navProduce', ['craft', 'refine', 'cook', 'alchemy']],
+          ['navTrade', ['flip', 'compare']],
+        ].map(([group, pages]) => (
+          <section key={group as string} className="card-section">
+            <h3>{tr(group as string)}</h3>
+            <div className={`cards n${pages.length}`}>
+              {CARDS.filter((c) => (pages as string[]).includes(c.page)).map((c) => (
+                <button key={c.page} className="card" onClick={() => go(c.page)}>
+                  <ItemIcon id={c.icon} size={64} />
+                  <div>
+                    <strong>{tr(c.page)}</strong>
+                    <span>{es ? c.es : c.en}</span>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </section>
+        ))}
       </Panel>
 
       <Panel title={es ? '¿Cómo evita los outliers?' : 'How are outliers avoided?'}>
